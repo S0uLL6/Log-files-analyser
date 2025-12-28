@@ -106,7 +106,6 @@ void EventGenerator::GenerateLoop() {
             num_tags = 1;
         }
 
-        // Используем MutableArraySequence для динамического добавления
         MutableArraySequence<std::string> unique_tags_temp;
         int attempts = 0;
         int added_count = 0;
@@ -123,7 +122,7 @@ void EventGenerator::GenerateLoop() {
             }
 
             if (is_unique) {
-                unique_tags_temp.Append(new_tag); // Append увеличивает размер
+                unique_tags_temp.Append(new_tag); 
                 added_count++;
             }
             attempts++;

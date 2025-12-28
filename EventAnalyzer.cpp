@@ -1,4 +1,3 @@
-// EventAnalyzer.cpp
 #include "EventAnalyzer.hpp"
 #include <iostream>
 
@@ -26,9 +25,7 @@ void EventAnalyzer::AnalyzeLoop() {
         try {
             Event event = read_stream.Read();
 
-            // std::cout << "Analyzer read: " << event.ToString() << std::endl; // Для отладки
-            // graph.ProcessEventForSimilarity(event); // Старый вызов
-            graph.ProcessEventForSimilarity(event, tag_weight, message_weight); // Новый вызов
+            graph.ProcessEventForSimilarity(event, tag_weight, message_weight); 
         } catch (const EndOfStreamException& e) {
             std::cout << "Analyzer caught EndOfStreamException. Stopping." << std::endl;
             break;

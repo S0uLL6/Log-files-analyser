@@ -1,4 +1,3 @@
-// UserInterface.cpp
 #include "UserInterface.hpp"
 
 UserInterface::UserInterface() : read_stream(write_stream), generator(write_stream), analyzer(read_stream) {}
@@ -8,7 +7,7 @@ void UserInterface::Run() {
     do {
         ShowMenu();
         std::cin >> choice;
-        std::cin.ignore(); // Игнорируем символ новой строки после числа
+        std::cin.ignore(); 
 
         switch (choice) {
             case 1:
@@ -31,8 +30,8 @@ void UserInterface::Run() {
                 break;
             case 0:
                 std::cout << "Stopping generator and analyzer..." << std::endl;
-                StopAnalyzer(); // Сначала останавливаем анализатор
-                StopGenerator(); // Потом останавливаем генератор
+                StopAnalyzer(); 
+                StopGenerator(); 
                 break;
             default:
                 std::cout << "Invalid choice. Please try again." << std::endl;
@@ -43,13 +42,12 @@ void UserInterface::Run() {
 }
 
 void UserInterface::ShowMenu() {
-    // Обновляем флаг, если анализатор завершился сам
     if (analyzer_running && !analyzer.IsRunning()) {
         analyzer_running = false;
-        std::cout << "Analyzer finished automatically." << std::endl; // Опциональное сообщение
+        std::cout << "Analyzer finished automatically." << std::endl; 
     }
 
-    std::cout << "\n--- Event Stream Analyzer ---" << std::endl;
+    std::cout << "\n Event Stream Analyzer " << std::endl;
     std::cout << "Current Status:" << std::endl;
     std::cout << "  Generator: " << (generator_running ? "Running" : "Stopped") << std::endl;
     std::cout << "  Analyzer:  " << (analyzer_running ? "Running" : "Stopped") << std::endl;
@@ -77,8 +75,8 @@ void UserInterface::StartGenerator() {
 void UserInterface::StopGenerator() {
     if (generator_running) {
         generator.Stop();
-        generator.Join(); // Ждем завершения потока
-        write_stream.Close(); // Закрываем поток записи, чтобы уведомить читающий поток
+        generator.Join(); 
+        write_stream.Close(); 
         generator_running = false;
         std::cout << "Generator stopped and stream closed." << std::endl;
     } else {
@@ -98,10 +96,7 @@ void UserInterface::StartAnalyzer() {
 
 void UserInterface::StopAnalyzer() {
     if (analyzer_running) {
-        // Устанавливаем флаг остановки для анализатора
-        // analyzer.Stop(); // Убираем, так как Stop больше не нужен в EventAnalyzer
-        // Вместо этого, просто ждем, если он еще работает
-        analyzer.Join(); // Ждем завершения потока
+        analyzer.Join(); 
         analyzer_running = false;
         std::cout << "Analyzer stopped." << std::endl;
     } else {
@@ -117,9 +112,8 @@ void UserInterface::DisplayResults() {
 }
 
 void UserInterface::DisplayEventDetails() {
-    // Проверяем, пуст ли граф, используя GetLength()
     auto vertices = analyzer.GetGraph().GetVertices();
-    if (vertices.GetLength() == 0) { // Заменяем .empty() на .GetLength() == 0
+    if (vertices.GetLength() == 0) { 
         std::cout << "Graph is empty. No events to display." << std::endl;
         return;
     }
@@ -130,16 +124,13 @@ void UserInterface::DisplayEventDetails() {
 
     if (input == "list") {
         std::cout << "Available Event IDs:" << std::endl;
-        // Используем цикл с индексом вместо range-based for
-        for (size_t i = 0; i < vertices.GetLength(); ++i) { // Используем GetLength()
-            std::cout << "  - " << vertices.Get(i) << std::endl; // Используем Get(i)
+        for (size_t i = 0; i < vertices.GetLength(); ++i) { 
+            std::cout << "  - " << vertices.Get(i) << std::endl; 
         }
         std::cout << std::endl;
-        // Снова запросим ID
         std::cout << "Enter the Event ID to view details: ";
         std::cin >> input;
     }
 
-    // Вызов метода из графа для печати деталей
     analyzer.GetGraph().PrintEventDetails(input);
 }

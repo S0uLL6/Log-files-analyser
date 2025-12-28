@@ -1,4 +1,3 @@
-// EventAnalyzer.h
 #ifndef EVENT_ANALYZER_H
 #define EVENT_ANALYZER_H
 
@@ -25,10 +24,8 @@ private:
     std::thread analyzer_thread;
     std::atomic<bool> should_stop{false};
 
-    // --- Новые параметры ---
     double tag_weight = 1.0;
     double message_weight = 1.0;
-    // -----------------------
 };
 
 #endif // EVENT_ANALYZER_H

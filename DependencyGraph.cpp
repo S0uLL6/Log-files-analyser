@@ -1,4 +1,4 @@
-// DependencyGraph.cpp
+
 #include "DependencyGraph.hpp"
 #include <algorithm>
 #include <iostream>
@@ -8,7 +8,7 @@
 #include <locale>
 #include <codecvt>
 #include <numeric>
-#include <functional> // std::less
+#include <functional> 
 
 void DependencyGraph::AddEvent(const Event& event) {
     nodes[event.GetId()] = GraphNode{event, {}};

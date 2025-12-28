@@ -1,4 +1,3 @@
-// UserInterface.h
 #ifndef USER_INTERFACE_H
 #define USER_INTERFACE_H
 
@@ -18,9 +17,9 @@ private:
     void StartGenerator();
     void StopGenerator();
     void StartAnalyzer();
-    void StopAnalyzer(); // Должен быть реализован
+    void StopAnalyzer(); 
     void DisplayResults();
-    void DisplayEventDetails(); // Новый метод
+    void DisplayEventDetails(); 
 
     LazyWriteStream write_stream;
     LazyReadStream read_stream;

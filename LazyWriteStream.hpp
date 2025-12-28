@@ -1,4 +1,3 @@
-// LazyWriteStream.h
 #ifndef LAZY_WRITE_STREAM_H
 #define LAZY_WRITE_STREAM_H
 
@@ -7,7 +6,6 @@
 #include <mutex>
 #include <condition_variable>
 
-// Исключение для конца потока
 class EndOfStreamException : public std::exception {
 public:
     const char* what() const noexcept override {
@@ -15,24 +13,19 @@ public:
     }
 };
 
-class LazyReadStream; // Предварительное объявление
+class LazyReadStream; 
 
 class LazyWriteStream {
-    friend class LazyReadStream; // Позволяем LazyReadStream получать прямой доступ к внутренностям
+    friend class LazyReadStream; 
 public:
-    // Конструктор
     LazyWriteStream();
 
-    // Записывает событие в поток
     void Write(const Event& event);
 
-    // Закрывает поток
     void Close();
 
-    // Проверяет, закрыт ли поток
     bool IsClosed() const;
 
-    // Получает размер буфера (для отладки)
     size_t GetBufferSize() const;
 
 private:

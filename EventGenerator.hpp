@@ -1,10 +1,9 @@
-// EventGenerator.h
 #ifndef EVENT_GENERATOR_H
 #define EVENT_GENERATOR_H
 
 #include "Event.hpp"
 #include "LazyWriteStream.hpp"
-#include "Sequence.hpp" // Подключаем ваш заголовок
+#include "Sequence.hpp" 
 #include <random>
 #include <thread>
 #include <chrono>
@@ -30,12 +29,12 @@ private:
     std::uniform_int_distribution<> id_dist;
     std::uniform_int_distribution<> type_dist;
     std::uniform_int_distribution<> tag_count_dist;
-    std::uniform_int_distribution<> tag_dist; // Нужен для фиксированного списка
+    std::uniform_int_distribution<> tag_dist; 
     std::uniform_int_distribution<> attr_dist;
     std::uniform_int_distribution<> word_count_dist;
 
     ArraySequence<std::string> event_types;
-    ArraySequence<std::string> possible_tags; // Вернули фиксированный список
+    ArraySequence<std::string> possible_tags; 
 };
 
 #endif // EVENT_GENERATOR_H

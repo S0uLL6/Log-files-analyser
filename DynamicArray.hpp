@@ -8,11 +8,11 @@ private:
 
 public:
     DynamicArray(size_t size) : size(size) {
-        if (size == 0) { // НОВОЕ
+        if (size == 0) { 
             data = nullptr;
             return;
         }
-        // if (size == 0) throw invalid_argument("Size cannot be zero"); // СТАРОЕ
+
         try {
             data = new T[size];
         } catch (const bad_alloc& e) {
