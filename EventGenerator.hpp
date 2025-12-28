@@ -1,0 +1,41 @@
+// EventGenerator.h
+#ifndef EVENT_GENERATOR_H
+#define EVENT_GENERATOR_H
+
+#include "Event.hpp"
+#include "LazyWriteStream.hpp"
+#include "Sequence.hpp" // Подключаем ваш заголовок
+#include <random>
+#include <thread>
+#include <chrono>
+#include <atomic>
+
+class EventGenerator {
+public:
+    EventGenerator(LazyWriteStream& write_stream);
+    void Start();
+    void Stop();
+    void Join();
+
+private:
+    void GenerateLoop();
+    void InitializeDistributions();
+
+    LazyWriteStream& write_stream;
+    std::thread generator_thread;
+    std::atomic<bool> should_stop{false};
+
+    std::random_device rd;
+    std::mt19937 gen;
+    std::uniform_int_distribution<> id_dist;
+    std::uniform_int_distribution<> type_dist;
+    std::uniform_int_distribution<> tag_count_dist;
+    std::uniform_int_distribution<> tag_dist; // Нужен для фиксированного списка
+    std::uniform_int_distribution<> attr_dist;
+    std::uniform_int_distribution<> word_count_dist;
+
+    ArraySequence<std::string> event_types;
+    ArraySequence<std::string> possible_tags; // Вернули фиксированный список
+};
+
+#endif // EVENT_GENERATOR_H
