@@ -37,16 +37,13 @@ private:
     std::unordered_map<std::string, GraphNode> nodes;
 
     std::set<std::string> ExtractWords(const std::string& message) const;
-    // ArraySequence -> ArraySequence
     double CalculateSimilarity(const ArraySequence<std::string>& tags1, const ArraySequence<std::string>& tags2,
                                ArraySequence<std::string>& intersection) const;
     double CalculateSimilarity(const std::set<std::string>& words1, const std::set<std::string>& words2,
                                std::set<std::string>& intersection) const;
 
-    // --- Вспомогательные функции ---
-    void SortArraySequence(ArraySequence<std::string>& arr) const; // Вспомогательная сортировка
+    void SortArraySequence(ArraySequence<std::string>& arr) const; 
     ArraySequence<std::string> ArraySetIntersection(const ArraySequence<std::string>& arr1, const ArraySequence<std::string>& arr2) const;
-    // -------------------------------
 
     static constexpr double DEFAULT_TAG_WEIGHT = 1.0;
     static constexpr double DEFAULT_MESSAGE_WEIGHT = 1.0;

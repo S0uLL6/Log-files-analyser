@@ -42,7 +42,7 @@ void DependencyGraph::ProcessEventForSimilarity(const Event& new_event, double t
             double similarity = 0.0;
             double total_weight = tag_weight + message_weight;
 
-            ArraySequence<std::string> common_tags(1); // Инициализируем с 1 элементом
+            ArraySequence<std::string> common_tags(1); 
             if (tag_weight > 0) {
                 double tag_sim = CalculateSimilarity(new_event.GetTags(), node.event.GetTags(), common_tags);
                 similarity += tag_sim * tag_weight;
@@ -92,18 +92,14 @@ std::set<std::string> DependencyGraph::ExtractWords(const std::string& message) 
     return words;
 }
 
-// --- Вспомогательная функция: сортировка ArraySequence ---
 void DependencyGraph::SortArraySequence(ArraySequence<std::string>& arr) const {
-    // Если массив пуст, нечего сортировать
     if (arr.GetLength() == 0) {
         return;
     }
-    // Простая сортировка пузырьком для ArraySequence строк
     size_t n = arr.GetLength();
     for (size_t i = 0; i < n - 1; ++i) {
         for (size_t j = 0; j < n - i - 1; ++j) {
             if (arr.Get(j) > arr.Get(j + 1)) {
-                // Меняем местами
                 std::string temp = arr.Get(j);
                 arr.SetAt(j, arr.Get(j + 1));
                 arr.SetAt(j + 1, temp);
@@ -112,28 +108,21 @@ void DependencyGraph::SortArraySequence(ArraySequence<std::string>& arr) const {
     }
 }
 
-// --- Вспомогательная функция: пересечение ArraySequence ---
 ArraySequence<std::string> DependencyGraph::ArraySetIntersection(const ArraySequence<std::string>& arr1, const ArraySequence<std::string>& arr2) const {
-    // Если один из массивов пуст, пересечение пусто
     if (arr1.GetLength() == 0 || arr2.GetLength() == 0) {
-        return ArraySequence<std::string>(0); // Создаём пустой ArraySequence через DynamicArray(0) -> ОШИБКА!
+        return ArraySequence<std::string>(0); 
     }
 
-    // Создаем копии для сортировки
     ArraySequence<std::string> sorted_arr1(arr1);
     ArraySequence<std::string> sorted_arr2(arr2);
 
     SortArraySequence(sorted_arr1);
     SortArraySequence(sorted_arr2);
 
-    // Определяем размер результата (максимум)
     size_t max_size = (sorted_arr1.GetLength() < sorted_arr2.GetLength()) ? sorted_arr1.GetLength() : sorted_arr2.GetLength();
-    // --- ИСПРАВЛЕНИЕ: Проверяем max_size перед созданием ---
     if (max_size == 0) {
-        // На всякий случай, хотя это маловероятно, если arr1 и arr2 не пусты
-        return ArraySequence<std::string>(0); // Опять проблема!
+        return ArraySequence<std::string>(0); 
     }
-    // -------------------------------------------------------
 
     ArraySequence<std::string> temp_result(max_size);
 
@@ -143,7 +132,7 @@ ArraySequence<std::string> DependencyGraph::ArraySetIntersection(const ArraySequ
             i++;
         } else if (sorted_arr1.Get(i) > sorted_arr2.Get(j)) {
             j++;
-        } else { // sorted_arr1.Get(i) == sorted_arr2.Get(j)
+        } else { 
             temp_result.SetAt(k, sorted_arr1.Get(i));
             i++;
             j++;
@@ -151,7 +140,6 @@ ArraySequence<std::string> DependencyGraph::ArraySetIntersection(const ArraySequ
         }
     }
 
-    // Создаем итоговый ArraySequence нужного размера
     ArraySequence<std::string> result(k);
     for (size_t idx = 0; idx < k; ++idx) {
         result.SetAt(idx, temp_result.Get(idx));
@@ -160,31 +148,19 @@ ArraySequence<std::string> DependencyGraph::ArraySetIntersection(const ArraySequ
     return result;
 }
 
-// --- Новая версия CalculateSimilarity для ArraySequence тегов ---
 double DependencyGraph::CalculateSimilarity(const ArraySequence<std::string>& tags1, const ArraySequence<std::string>& tags2,
                                            ArraySequence<std::string>& intersection) const {
-    // Используем нашу вспомогательную функцию
-    // --- ИСПРАВЛЕНИЕ: Обрабатываем случай пустого пересечения ---
     intersection = ArraySetIntersection(tags1, tags2);
-    // Если ArraySetIntersection возвращает ArraySequence(0), его GetLength() будет 0
     int common_count = intersection.GetLength();
-    // -----------------------------------------------------------
-
-    // Для объединения: (размер_1 + размер_2 - пересечение)
-    // Более точный способ: объединить два отсортированных массива.
     ArraySequence<std::string> sorted_tags1(tags1);
     ArraySequence<std::string> sorted_tags2(tags2);
     SortArraySequence(sorted_tags1);
     SortArraySequence(sorted_tags2);
 
-    // Временный массив для объединения (максимальный возможный размер)
     size_t max_union_size = tags1.GetLength() + tags2.GetLength();
-    // --- ИСПРАВЛЕНИЕ: Проверяем max_union_size перед созданием ---
     if (max_union_size == 0) {
-        // Оба массива пусты
-        return 0.0; // Схожесть 0
+        return 0.0; 
     }
-    // ------------------------------------------------------------
     ArraySequence<std::string> temp_union(max_union_size);
     size_t i = 0, j = 0, k = 0;
 
@@ -193,12 +169,11 @@ double DependencyGraph::CalculateSimilarity(const ArraySequence<std::string>& ta
             temp_union.SetAt(k++, sorted_tags1.Get(i++));
         } else if (sorted_tags1.Get(i) > sorted_tags2.Get(j)) {
             temp_union.SetAt(k++, sorted_tags2.Get(j++));
-        } else { // ==
-            temp_union.SetAt(k++, sorted_tags1.Get(i++)); // Добавляем один раз
-            j++; // Пропускаем дубликат
+        } else { 
+            temp_union.SetAt(k++, sorted_tags1.Get(i++)); 
+            j++; 
         }
     }
-    // Добавляем оставшиеся элементы
     while (i < sorted_tags1.GetLength()) {
         temp_union.SetAt(k++, sorted_tags1.Get(i++));
     }
@@ -206,7 +181,7 @@ double DependencyGraph::CalculateSimilarity(const ArraySequence<std::string>& ta
         temp_union.SetAt(k++, sorted_tags2.Get(j++));
     }
 
-    int total_count = k; // Фактический размер объединения
+    int total_count = k; 
 
     return total_count > 0 ? static_cast<double>(common_count) / total_count : 0.0;
 }
@@ -218,21 +193,19 @@ double DependencyGraph::CalculateSimilarity(const std::set<std::string>& words1,
                           words2.begin(), words2.end(),
                           std::inserter(intersection, intersection.begin()));
     int common_count = intersection.size();
-    // --- ИСПРАВЛЕНИЕ: Используем std::deque только для std::set_union ---
-    std::deque<std::string> temp_words1, temp_words2, temp_union; // Это для std::set, не ArraySequence
+    std::deque<std::string> temp_words1, temp_words2, temp_union;
     for (const auto& w : words1) temp_words1.push_back(w);
     for (const auto& w : words2) temp_words2.push_back(w);
     std::set_union(temp_words1.begin(), temp_words1.end(),
                    temp_words2.begin(), temp_words2.end(),
                    std::back_inserter(temp_union));
     int total_count = temp_union.size();
-    // ------------------------------------------------------------
 
     return total_count > 0 ? static_cast<double>(common_count) / total_count : 0.0;
 }
 
 void DependencyGraph::PrintGraph() const {
-    std::cout << "\n--- Dependency Graph ---" << std::endl;
+    std::cout << "\n Dependency Graph" << std::endl;
 
     int total_vertices = nodes.size();
     int total_edges = 0;
@@ -250,7 +223,6 @@ void DependencyGraph::PrintGraph() const {
 
     if (nodes.empty()) {
         std::cout << "Graph is empty." << std::endl;
-        std::cout << "------------------------\n" << std::endl;
         return;
     }
 
@@ -304,14 +276,13 @@ void DependencyGraph::PrintGraph() const {
             }
         }
     }
-    std::cout << "------------------------\n" << std::endl;
 }
 
 void DependencyGraph::PrintEventDetails(const std::string& id) const {
     auto it = nodes.find(id);
     if (it != nodes.end()) {
         const Event& event = it->second.event;
-        std::cout << "\n--- Event Details for ID: " << id << " ---" << std::endl;
+        std::cout << "\n Event Details for ID: " << id << std::endl;
         std::cout << "Type: " << event.GetType() << std::endl;
         std::cout << "Message: " << event.GetMessage() << std::endl;
         std::cout << "Tags: ";
@@ -321,10 +292,9 @@ void DependencyGraph::PrintEventDetails(const std::string& id) const {
             std::cout << tags.Get(i);
         }
         std::cout << std::endl;
-        std::cout << "Timestamp (ms since epoch): "
+        std::cout << "Timestamp (ms since start): "
                   << std::chrono::duration_cast<std::chrono::milliseconds>(event.GetTimestamp().time_since_epoch()).count()
                   << std::endl;
-        std::cout << "-----------------------------------\n" << std::endl;
     } else {
         std::cout << "Event with ID '" << id << "' not found in the graph." << std::endl;
     }
