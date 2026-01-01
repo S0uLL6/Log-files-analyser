@@ -26,6 +26,7 @@ private:
 
     double tag_weight = 1.0;
     double message_weight = 1.0;
+    double time_weight = 1.0; 
 };
 
 #endif // EVENT_ANALYZER_H

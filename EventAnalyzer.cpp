@@ -24,8 +24,7 @@ void EventAnalyzer::AnalyzeLoop() {
     while (!should_stop) {
         try {
             Event event = read_stream.Read();
-
-            graph.ProcessEventForSimilarity(event, tag_weight, message_weight); 
+            graph.ProcessEventForSimilarity(event, tag_weight, message_weight, time_weight); 
         } catch (const EndOfStreamException& e) {
             std::cout << "Analyzer caught EndOfStreamException. Stopping." << std::endl;
             break;

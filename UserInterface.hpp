@@ -17,10 +17,11 @@ private:
     void StartGenerator();
     void StopGenerator();
     void StartAnalyzer();
-    void StopAnalyzer(); 
+    void StopAnalyzer();
     void DisplayResults();
-    void DisplayEventDetails(); 
-
+    void DisplayEventDetails();
+    void DisplayTopConnectedEvents();
+    void DisplayIsolatedEvents();
     LazyWriteStream write_stream;
     LazyReadStream read_stream;
     EventGenerator generator;

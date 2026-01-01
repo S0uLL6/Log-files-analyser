@@ -15,8 +15,8 @@ public:
     std::string GetId() const;
     std::string GetType() const;
     std::string GetMessage() const;
-    const ArraySequence<std::string>& GetTags() const; 
-    std::chrono::steady_clock::time_point GetTimestamp() const;
+    const ArraySequence<std::string>& GetTags() const;
+    std::chrono::steady_clock::time_point GetTimestamp() const; 
 
     std::string ToString() const;
 
@@ -24,7 +24,7 @@ private:
     std::string id;
     std::string type;
     std::string message;
-    ArraySequence<std::string> tags; 
+    ArraySequence<std::string> tags;
     std::chrono::steady_clock::time_point timestamp;
 };
 

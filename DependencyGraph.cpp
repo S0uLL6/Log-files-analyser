@@ -1,4 +1,3 @@
-
 #include "DependencyGraph.hpp"
 #include <algorithm>
 #include <iostream>
@@ -8,7 +7,8 @@
 #include <locale>
 #include <codecvt>
 #include <numeric>
-#include <functional> 
+#include <functional>
+#include <chrono> 
 
 void DependencyGraph::AddEvent(const Event& event) {
     nodes[event.GetId()] = GraphNode{event, {}};
@@ -16,9 +16,10 @@ void DependencyGraph::AddEvent(const Event& event) {
 
 void DependencyGraph::AddEdge(const std::string& id1, const std::string& id2, double weight,
                               const ArraySequence<std::string>& common_tags,
-                              const std::set<std::string>& common_words) {
+                              const std::set<std::string>& common_words,
+                              double time_similarity) {
     if (nodes.count(id1) && nodes.count(id2)) {
-        EdgeDetails details{weight, common_tags, common_words};
+        EdgeDetails details{weight, common_tags, common_words, time_similarity};
         auto current_it = nodes[id1].neighbors.find(id2);
         if (current_it != nodes[id1].neighbors.end() && current_it->second.weight >= weight) {
              return;
@@ -29,10 +30,10 @@ void DependencyGraph::AddEdge(const std::string& id1, const std::string& id2, do
 }
 
 void DependencyGraph::ProcessEventForSimilarity(const Event& new_event) {
-    ProcessEventForSimilarity(new_event, DEFAULT_TAG_WEIGHT, DEFAULT_MESSAGE_WEIGHT);
+    ProcessEventForSimilarity(new_event, DEFAULT_TAG_WEIGHT, DEFAULT_MESSAGE_WEIGHT, DEFAULT_TIME_WEIGHT);
 }
 
-void DependencyGraph::ProcessEventForSimilarity(const Event& new_event, double tag_weight, double message_weight) {
+void DependencyGraph::ProcessEventForSimilarity(const Event& new_event, double tag_weight, double message_weight, double time_weight) {
     AddEvent(new_event);
 
     auto words_new = ExtractWords(new_event.GetMessage());
@@ -40,9 +41,9 @@ void DependencyGraph::ProcessEventForSimilarity(const Event& new_event, double t
     for (const auto& [id, node] : nodes) {
         if (id != new_event.GetId()) {
             double similarity = 0.0;
-            double total_weight = tag_weight + message_weight;
+            double total_weight = tag_weight + message_weight + time_weight; 
 
-            ArraySequence<std::string> common_tags(1); 
+            ArraySequence<std::string> common_tags(1);
             if (tag_weight > 0) {
                 double tag_sim = CalculateSimilarity(new_event.GetTags(), node.event.GetTags(), common_tags);
                 similarity += tag_sim * tag_weight;
@@ -55,12 +56,18 @@ void DependencyGraph::ProcessEventForSimilarity(const Event& new_event, double t
                 similarity += msg_sim * message_weight;
             }
 
+            double time_sim = 0.0;
+            if (time_weight > 0) {
+                time_sim = CalculateTimeSimilarity(new_event.GetTimestamp(), node.event.GetTimestamp());
+                similarity += time_sim * time_weight;
+            }
+
             if (total_weight > 0) {
                 similarity /= total_weight;
             }
 
             if (similarity > 0.0) {
-                AddEdge(new_event.GetId(), id, similarity, common_tags, common_words);
+                AddEdge(new_event.GetId(), id, similarity, common_tags, common_words, time_sim); 
             }
         }
     }
@@ -92,6 +99,20 @@ std::set<std::string> DependencyGraph::ExtractWords(const std::string& message) 
     return words;
 }
 
+//new
+double DependencyGraph::CalculateTimeSimilarity(const std::chrono::steady_clock::time_point& t1,
+                                               const std::chrono::steady_clock::time_point& t2) const {
+    auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t2);
+    auto abs_diff = std::abs(diff.count()); //in ms
+
+    if (abs_diff > TIME_WINDOW_MS.count()) {
+        return 0.0;
+    }
+
+
+    return 1.0 - (static_cast<double>(abs_diff) / TIME_WINDOW_MS.count());
+}
+
 void DependencyGraph::SortArraySequence(ArraySequence<std::string>& arr) const {
     if (arr.GetLength() == 0) {
         return;
@@ -110,7 +131,7 @@ void DependencyGraph::SortArraySequence(ArraySequence<std::string>& arr) const {
 
 ArraySequence<std::string> DependencyGraph::ArraySetIntersection(const ArraySequence<std::string>& arr1, const ArraySequence<std::string>& arr2) const {
     if (arr1.GetLength() == 0 || arr2.GetLength() == 0) {
-        return ArraySequence<std::string>(0); 
+        return ArraySequence<std::string>(0);
     }
 
     ArraySequence<std::string> sorted_arr1(arr1);
@@ -121,7 +142,7 @@ ArraySequence<std::string> DependencyGraph::ArraySetIntersection(const ArraySequ
 
     size_t max_size = (sorted_arr1.GetLength() < sorted_arr2.GetLength()) ? sorted_arr1.GetLength() : sorted_arr2.GetLength();
     if (max_size == 0) {
-        return ArraySequence<std::string>(0); 
+        return ArraySequence<std::string>(0);
     }
 
     ArraySequence<std::string> temp_result(max_size);
@@ -132,7 +153,7 @@ ArraySequence<std::string> DependencyGraph::ArraySetIntersection(const ArraySequ
             i++;
         } else if (sorted_arr1.Get(i) > sorted_arr2.Get(j)) {
             j++;
-        } else { 
+        } else {
             temp_result.SetAt(k, sorted_arr1.Get(i));
             i++;
             j++;
@@ -152,6 +173,7 @@ double DependencyGraph::CalculateSimilarity(const ArraySequence<std::string>& ta
                                            ArraySequence<std::string>& intersection) const {
     intersection = ArraySetIntersection(tags1, tags2);
     int common_count = intersection.GetLength();
+
     ArraySequence<std::string> sorted_tags1(tags1);
     ArraySequence<std::string> sorted_tags2(tags2);
     SortArraySequence(sorted_tags1);
@@ -159,7 +181,7 @@ double DependencyGraph::CalculateSimilarity(const ArraySequence<std::string>& ta
 
     size_t max_union_size = tags1.GetLength() + tags2.GetLength();
     if (max_union_size == 0) {
-        return 0.0; 
+        return 0.0;
     }
     ArraySequence<std::string> temp_union(max_union_size);
     size_t i = 0, j = 0, k = 0;
@@ -169,9 +191,9 @@ double DependencyGraph::CalculateSimilarity(const ArraySequence<std::string>& ta
             temp_union.SetAt(k++, sorted_tags1.Get(i++));
         } else if (sorted_tags1.Get(i) > sorted_tags2.Get(j)) {
             temp_union.SetAt(k++, sorted_tags2.Get(j++));
-        } else { 
-            temp_union.SetAt(k++, sorted_tags1.Get(i++)); 
-            j++; 
+        } else {
+            temp_union.SetAt(k++, sorted_tags1.Get(i++));
+            j++;
         }
     }
     while (i < sorted_tags1.GetLength()) {
@@ -181,7 +203,7 @@ double DependencyGraph::CalculateSimilarity(const ArraySequence<std::string>& ta
         temp_union.SetAt(k++, sorted_tags2.Get(j++));
     }
 
-    int total_count = k; 
+    int total_count = k;
 
     return total_count > 0 ? static_cast<double>(common_count) / total_count : 0.0;
 }
@@ -205,7 +227,7 @@ double DependencyGraph::CalculateSimilarity(const std::set<std::string>& words1,
 }
 
 void DependencyGraph::PrintGraph() const {
-    std::cout << "\n Dependency Graph" << std::endl;
+    std::cout << "\nDependency Graph" << std::endl;
 
     int total_vertices = nodes.size();
     int total_edges = 0;
@@ -245,7 +267,8 @@ void DependencyGraph::PrintGraph() const {
             for (const auto& [neighbor_id, details] : node.neighbors) {
                 if (id < neighbor_id) {
                     std::cout << "    - " << neighbor_id
-                              << " (Similarity: " << details.weight << "; ";
+                              << " (Similarity: " << details.weight
+                              << ", Time Sim: " << details.time_similarity << "; ";
 
                     if (details.common_tags.GetLength() > 0) {
                         std::cout << "Tags: ";
@@ -292,7 +315,7 @@ void DependencyGraph::PrintEventDetails(const std::string& id) const {
             std::cout << tags.Get(i);
         }
         std::cout << std::endl;
-        std::cout << "Timestamp (ms since start): "
+        std::cout << "Timestamp (ms since epoch): "
                   << std::chrono::duration_cast<std::chrono::milliseconds>(event.GetTimestamp().time_since_epoch()).count()
                   << std::endl;
     } else {
@@ -317,4 +340,45 @@ ArraySequence<std::string> DependencyGraph::GetNeighbors(const std::string& id) 
         }
     }
     return neighbors;
+}
+
+// new
+void DependencyGraph::PrintTopConnectedEvents() const {
+    if (nodes.empty()) {
+        std::cout << "\nNo events to analyze for top connections." << std::endl;
+        return;
+    }
+
+    int max_degree = 0;
+    for (const auto& [id, node] : nodes) {
+        if (static_cast<int>(node.neighbors.size()) > max_degree) {
+            max_degree = node.neighbors.size();
+        }
+    }
+
+    if (max_degree == 0) {
+        std::cout << "\nNo events have connections." << std::endl;
+        return;
+    }
+
+    std::cout << "\n Events with Highest Number of Connections (" << max_degree << ") " << std::endl;
+    for (const auto& [id, node] : nodes) {
+        if (static_cast<int>(node.neighbors.size()) == max_degree) {
+            std::cout << "  - " << id << " (Type: " << node.event.GetType() << ")" << std::endl;
+        }
+    }
+}
+
+void DependencyGraph::PrintIsolatedEvents() const {
+    std::cout << "\n Isolated Events (No Connections) " << std::endl;
+    bool found_isolated = false;
+    for (const auto& [id, node] : nodes) {
+        if (node.neighbors.empty()) {
+            std::cout << "  - " << id << " (Type: " << node.event.GetType() << ")" << std::endl;
+            found_isolated = true;
+        }
+    }
+    if (!found_isolated) {
+        std::cout << "  None" << std::endl;
+    }
 }

@@ -1,4 +1,5 @@
-#include "UserInterface.hpp"
+#include "UserInterface.hpp" 
+#include <iostream>
 
 UserInterface::UserInterface() : read_stream(write_stream), generator(write_stream), analyzer(read_stream) {}
 
@@ -7,7 +8,7 @@ void UserInterface::Run() {
     do {
         ShowMenu();
         std::cin >> choice;
-        std::cin.ignore(); 
+        std::cin.ignore();
 
         switch (choice) {
             case 1:
@@ -28,10 +29,16 @@ void UserInterface::Run() {
             case 6:
                 DisplayEventDetails();
                 break;
+            case 7:
+                DisplayTopConnectedEvents();
+                break;
+            case 8:
+                DisplayIsolatedEvents();
+                break;
             case 0:
                 std::cout << "Stopping generator and analyzer..." << std::endl;
-                StopAnalyzer(); 
-                StopGenerator(); 
+                StopAnalyzer();
+                StopGenerator();
                 break;
             default:
                 std::cout << "Invalid choice. Please try again." << std::endl;
@@ -44,10 +51,10 @@ void UserInterface::Run() {
 void UserInterface::ShowMenu() {
     if (analyzer_running && !analyzer.IsRunning()) {
         analyzer_running = false;
-        std::cout << "Analyzer finished automatically." << std::endl; 
+        std::cout << "Analyzer finished automatically." << std::endl;
     }
 
-    std::cout << "\n Event Stream Analyzer " << std::endl;
+    std::cout << "\n--- Event Stream Analyzer ---" << std::endl;
     std::cout << "Current Status:" << std::endl;
     std::cout << "  Generator: " << (generator_running ? "Running" : "Stopped") << std::endl;
     std::cout << "  Analyzer:  " << (analyzer_running ? "Running" : "Stopped") << std::endl;
@@ -58,6 +65,8 @@ void UserInterface::ShowMenu() {
     std::cout << "4. Stop Analyzer" << std::endl;
     std::cout << "5. Display Graph Results" << std::endl;
     std::cout << "6. Display Event Details" << std::endl;
+    std::cout << "7. Display Top Connected Events" << std::endl;
+    std::cout << "8. Display Isolated Events" << std::endl;
     std::cout << "0. Exit" << std::endl;
     std::cout << "Enter your choice: ";
 }
@@ -96,7 +105,7 @@ void UserInterface::StartAnalyzer() {
 
 void UserInterface::StopAnalyzer() {
     if (analyzer_running) {
-        analyzer.Join(); 
+        analyzer.Join(); // Ждем завершения потока
         analyzer_running = false;
         std::cout << "Analyzer stopped." << std::endl;
     } else {
@@ -113,7 +122,7 @@ void UserInterface::DisplayResults() {
 
 void UserInterface::DisplayEventDetails() {
     auto vertices = analyzer.GetGraph().GetVertices();
-    if (vertices.GetLength() == 0) { 
+    if (vertices.GetLength() == 0) {
         std::cout << "Graph is empty. No events to display." << std::endl;
         return;
     }
@@ -124,8 +133,8 @@ void UserInterface::DisplayEventDetails() {
 
     if (input == "list") {
         std::cout << "Available Event IDs:" << std::endl;
-        for (size_t i = 0; i < vertices.GetLength(); ++i) { 
-            std::cout << "  - " << vertices.Get(i) << std::endl; 
+        for (size_t i = 0; i < vertices.GetLength(); ++i) {
+            std::cout << "  - " << vertices.Get(i) << std::endl;
         }
         std::cout << std::endl;
         std::cout << "Enter the Event ID to view details: ";
@@ -133,4 +142,12 @@ void UserInterface::DisplayEventDetails() {
     }
 
     analyzer.GetGraph().PrintEventDetails(input);
+}
+
+void UserInterface::DisplayTopConnectedEvents() {
+    analyzer.GetGraph().PrintTopConnectedEvents();
+}
+
+void UserInterface::DisplayIsolatedEvents() {
+    analyzer.GetGraph().PrintIsolatedEvents();
 }
