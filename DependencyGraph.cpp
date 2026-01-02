@@ -8,7 +8,8 @@
 #include <codecvt>
 #include <numeric>
 #include <functional>
-#include <chrono> 
+#include <chrono>
+#include <deque> 
 
 void DependencyGraph::AddEvent(const Event& event) {
     nodes[event.GetId()] = GraphNode{event, {}};
@@ -17,9 +18,11 @@ void DependencyGraph::AddEvent(const Event& event) {
 void DependencyGraph::AddEdge(const std::string& id1, const std::string& id2, double weight,
                               const ArraySequence<std::string>& common_tags,
                               const std::set<std::string>& common_words,
-                              double time_similarity) {
+                              double time_similarity,
+                              bool user_id_match,
+                              bool ip_match) {
     if (nodes.count(id1) && nodes.count(id2)) {
-        EdgeDetails details{weight, common_tags, common_words, time_similarity};
+        EdgeDetails details{weight, common_tags, common_words, time_similarity, user_id_match, ip_match};
         auto current_it = nodes[id1].neighbors.find(id2);
         if (current_it != nodes[id1].neighbors.end() && current_it->second.weight >= weight) {
              return;
@@ -30,10 +33,10 @@ void DependencyGraph::AddEdge(const std::string& id1, const std::string& id2, do
 }
 
 void DependencyGraph::ProcessEventForSimilarity(const Event& new_event) {
-    ProcessEventForSimilarity(new_event, DEFAULT_TAG_WEIGHT, DEFAULT_MESSAGE_WEIGHT, DEFAULT_TIME_WEIGHT);
+    ProcessEventForSimilarity(new_event, DEFAULT_TAG_WEIGHT, DEFAULT_MESSAGE_WEIGHT, DEFAULT_TIME_WEIGHT, DEFAULT_USER_ID_WEIGHT, DEFAULT_IP_WEIGHT);
 }
 
-void DependencyGraph::ProcessEventForSimilarity(const Event& new_event, double tag_weight, double message_weight, double time_weight) {
+void DependencyGraph::ProcessEventForSimilarity(const Event& new_event, double tag_weight, double message_weight, double time_weight, double user_id_weight, double ip_weight) {
     AddEvent(new_event);
 
     auto words_new = ExtractWords(new_event.GetMessage());
@@ -41,7 +44,7 @@ void DependencyGraph::ProcessEventForSimilarity(const Event& new_event, double t
     for (const auto& [id, node] : nodes) {
         if (id != new_event.GetId()) {
             double similarity = 0.0;
-            double total_weight = tag_weight + message_weight + time_weight; 
+            double total_weight = tag_weight + message_weight + time_weight + user_id_weight + ip_weight; 
 
             ArraySequence<std::string> common_tags(1);
             if (tag_weight > 0) {
@@ -62,12 +65,24 @@ void DependencyGraph::ProcessEventForSimilarity(const Event& new_event, double t
                 similarity += time_sim * time_weight;
             }
 
+            double user_id_sim = 0.0;
+            if (user_id_weight > 0) {
+                user_id_sim = CalculateUserIdSimilarity(new_event.GetUserId(), node.event.GetUserId());
+                similarity += user_id_sim * user_id_weight;
+            }
+
+            double ip_sim = 0.0;
+            if (ip_weight > 0) {
+                ip_sim = CalculateIpSimilarity(new_event.GetIpAddress(), node.event.GetIpAddress());
+                similarity += ip_sim * ip_weight;
+            }
+
             if (total_weight > 0) {
                 similarity /= total_weight;
             }
 
             if (similarity > 0.0) {
-                AddEdge(new_event.GetId(), id, similarity, common_tags, common_words, time_sim); 
+                AddEdge(new_event.GetId(), id, similarity, common_tags, common_words, time_sim, user_id_sim > 0.0, ip_sim > 0.0); // Передаем bool
             }
         }
     }
@@ -99,18 +114,26 @@ std::set<std::string> DependencyGraph::ExtractWords(const std::string& message) 
     return words;
 }
 
-//new
 double DependencyGraph::CalculateTimeSimilarity(const std::chrono::steady_clock::time_point& t1,
                                                const std::chrono::steady_clock::time_point& t2) const {
     auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t2);
-    auto abs_diff = std::abs(diff.count()); //in ms
+    auto abs_diff = std::abs(diff.count());
 
     if (abs_diff > TIME_WINDOW_MS.count()) {
         return 0.0;
     }
 
-
     return 1.0 - (static_cast<double>(abs_diff) / TIME_WINDOW_MS.count());
+}
+
+double DependencyGraph::CalculateUserIdSimilarity(const std::string& id1, const std::string& id2) const {
+    return (id1 == id2) ? 1.0 : 0.0;
+}
+
+double DependencyGraph::CalculateIpSimilarity(const std::string& ip1, const std::string& ip2) const {
+
+    // Мб сравнение по подсети
+    return (ip1 == ip2) ? 1.0 : 0.0;
 }
 
 void DependencyGraph::SortArraySequence(ArraySequence<std::string>& arr) const {
@@ -227,7 +250,7 @@ double DependencyGraph::CalculateSimilarity(const std::set<std::string>& words1,
 }
 
 void DependencyGraph::PrintGraph() const {
-    std::cout << "\nDependency Graph" << std::endl;
+    std::cout << "\n Dependency Graph " << std::endl;
 
     int total_vertices = nodes.size();
     int total_edges = 0;
@@ -251,6 +274,8 @@ void DependencyGraph::PrintGraph() const {
     std::cout << "Events:" << std::endl;
     for (const auto& [id, node] : nodes) {
         std::cout << "  - " << id << " (Type: " << node.event.GetType()
+                  << ", User ID: " << node.event.GetUserId() 
+                  << ", IP: " << node.event.GetIpAddress() 
                   << ", Tags: ";
         for (size_t i = 0; i < node.event.GetTags().GetLength(); ++i) {
             if (i > 0) std::cout << ", ";
@@ -268,7 +293,10 @@ void DependencyGraph::PrintGraph() const {
                 if (id < neighbor_id) {
                     std::cout << "    - " << neighbor_id
                               << " (Similarity: " << details.weight
-                              << ", Time Sim: " << details.time_similarity << "; ";
+                              << ", Time Sim: " << details.time_similarity
+                              << ", User ID Match: " << (details.user_id_match ? "Yes" : "No") // Выводим совпадение User ID
+                              << ", IP Match: " << (details.ip_match ? "Yes" : "No") // Выводим совпадение IP
+                              << "; ";
 
                     if (details.common_tags.GetLength() > 0) {
                         std::cout << "Tags: ";
@@ -305,9 +333,11 @@ void DependencyGraph::PrintEventDetails(const std::string& id) const {
     auto it = nodes.find(id);
     if (it != nodes.end()) {
         const Event& event = it->second.event;
-        std::cout << "\n Event Details for ID: " << id << std::endl;
+        std::cout << "\n--- Event Details for ID: " << id << " ---" << std::endl;
         std::cout << "Type: " << event.GetType() << std::endl;
         std::cout << "Message: " << event.GetMessage() << std::endl;
+        std::cout << "User ID: " << event.GetUserId() << std::endl; // Выводим User ID
+        std::cout << "IP Address: " << event.GetIpAddress() << std::endl; // Выводим IP
         std::cout << "Tags: ";
         const auto& tags = event.GetTags();
         for (size_t i = 0; i < tags.GetLength(); ++i) {
@@ -342,7 +372,6 @@ ArraySequence<std::string> DependencyGraph::GetNeighbors(const std::string& id) 
     return neighbors;
 }
 
-// new
 void DependencyGraph::PrintTopConnectedEvents() const {
     if (nodes.empty()) {
         std::cout << "\nNo events to analyze for top connections." << std::endl;
@@ -364,7 +393,7 @@ void DependencyGraph::PrintTopConnectedEvents() const {
     std::cout << "\n Events with Highest Number of Connections (" << max_degree << ") " << std::endl;
     for (const auto& [id, node] : nodes) {
         if (static_cast<int>(node.neighbors.size()) == max_degree) {
-            std::cout << "  - " << id << " (Type: " << node.event.GetType() << ")" << std::endl;
+            std::cout << "  - " << id << " (Type: " << node.event.GetType() << ", User ID: " << node.event.GetUserId() << ", IP: " << node.event.GetIpAddress() << ")" << std::endl;
         }
     }
 }
@@ -374,7 +403,7 @@ void DependencyGraph::PrintIsolatedEvents() const {
     bool found_isolated = false;
     for (const auto& [id, node] : nodes) {
         if (node.neighbors.empty()) {
-            std::cout << "  - " << id << " (Type: " << node.event.GetType() << ")" << std::endl;
+            std::cout << "  - " << id << " (Type: " << node.event.GetType() << ", User ID: " << node.event.GetUserId() << ", IP: " << node.event.GetIpAddress() << ")" << std::endl;
             found_isolated = true;
         }
     }

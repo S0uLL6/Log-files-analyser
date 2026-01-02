@@ -3,7 +3,7 @@
 
 #include "Event.hpp"
 #include "LazyWriteStream.hpp"
-#include "Sequence.hpp" 
+#include "Sequence.hpp"
 #include <random>
 #include <thread>
 #include <chrono>
@@ -29,12 +29,16 @@ private:
     std::uniform_int_distribution<> id_dist;
     std::uniform_int_distribution<> type_dist;
     std::uniform_int_distribution<> tag_count_dist;
-    std::uniform_int_distribution<> tag_dist; 
+    std::uniform_int_distribution<> tag_dist;
+    std::uniform_int_distribution<> user_id_dist;
+    std::uniform_int_distribution<> ip_dist;
     std::uniform_int_distribution<> attr_dist;
     std::uniform_int_distribution<> word_count_dist;
 
     ArraySequence<std::string> event_types;
-    ArraySequence<std::string> possible_tags; 
+    ArraySequence<std::string> possible_tags;
+    ArraySequence<std::string> possible_user_ids; 
+    ArraySequence<std::string> possible_ips; 
 };
 
 #endif // EVENT_GENERATOR_H

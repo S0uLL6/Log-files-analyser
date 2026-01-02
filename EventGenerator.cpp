@@ -50,9 +50,17 @@ EventGenerator::EventGenerator(LazyWriteStream& write_stream)
     static const std::string possible_tag_data[] = {
         "security", "performance", "user", "system", "database", "network", "io", "cache", "auth", "config", "error_handling"
     };
+    static const std::string possible_user_id_data[] = {
+        "user_001", "user_002", "admin_01", "guest_123", "service_a", "service_b", "user_999", "user_555"
+    };
+    static const std::string possible_ip_data[] = {
+        "192.168.1.10", "10.0.0.5", "172.16.0.100", "192.168.1.200", "10.0.0.10", "172.16.0.50", "192.168.1.150", "10.0.0.15"
+    };
 
     event_types = ArraySequence<std::string>(event_type_data, sizeof(event_type_data) / sizeof(event_type_data[0]));
     possible_tags = ArraySequence<std::string>(possible_tag_data, sizeof(possible_tag_data) / sizeof(possible_tag_data[0]));
+    possible_user_ids = ArraySequence<std::string>(possible_user_id_data, sizeof(possible_user_id_data) / sizeof(possible_user_id_data[0]));
+    possible_ips = ArraySequence<std::string>(possible_ip_data, sizeof(possible_ip_data) / sizeof(possible_ip_data[0]));
 
     InitializeDistributions();
 }
@@ -63,6 +71,12 @@ void EventGenerator::InitializeDistributions() {
     }
     if (possible_tags.GetLength() > 0) {
         tag_dist = std::uniform_int_distribution<>(0, static_cast<int>(possible_tags.GetLength()) - 1);
+    }
+    if (possible_user_ids.GetLength() > 0) {
+        user_id_dist = std::uniform_int_distribution<>(0, static_cast<int>(possible_user_ids.GetLength()) - 1);
+    }
+    if (possible_ips.GetLength() > 0) {
+        ip_dist = std::uniform_int_distribution<>(0, static_cast<int>(possible_ips.GetLength()) - 1);
     }
 }
 
@@ -84,8 +98,8 @@ void EventGenerator::Join() {
 }
 
 void EventGenerator::GenerateLoop() {
-    if (event_types.GetLength() == 0 || possible_tags.GetLength() == 0) {
-        std::cerr << "Error: EventGenerator has empty types or tags." << std::endl;
+    if (event_types.GetLength() == 0 || possible_tags.GetLength() == 0 || possible_user_ids.GetLength() == 0 || possible_ips.GetLength() == 0) {
+        std::cerr << "Error: EventGenerator has empty types, tags, user IDs, or IPs." << std::endl;
         return;
     }
 
@@ -122,7 +136,7 @@ void EventGenerator::GenerateLoop() {
             }
 
             if (is_unique) {
-                unique_tags_temp.Append(new_tag); 
+                unique_tags_temp.Append(new_tag);
                 added_count++;
             }
             attempts++;
@@ -133,7 +147,10 @@ void EventGenerator::GenerateLoop() {
              final_tags.SetAt(idx, unique_tags_temp.Get(idx));
         }
 
-        Event event(id, type, message, final_tags, std::chrono::steady_clock::now());
+        std::string user_id = possible_user_ids.Get(user_id_dist(gen));
+        std::string ip_address = possible_ips.Get(ip_dist(gen));
+
+        Event event(id, type, message, final_tags, user_id, ip_address, std::chrono::steady_clock::now()); // Передаем новые поля
 
         try {
             write_stream.Write(event);
