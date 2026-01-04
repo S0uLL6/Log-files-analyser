@@ -12,12 +12,17 @@ public:
     EventAnalyzer(LazyReadStream& read_stream);
 
     void Start();
+    void StartAnalysisByTagsOnly();
+    void StartAnalysisByNonTagsOnly();
+    void Stop(); 
     void Join();
     const DependencyGraph& GetGraph() const;
     bool IsRunning() const;
 
 private:
     void AnalyzeLoop();
+    void AnalyzeLoopByTagsOnly();
+    void AnalyzeLoopByNonTagsOnly();
 
     LazyReadStream& read_stream;
     DependencyGraph graph;
@@ -27,8 +32,8 @@ private:
     double tag_weight = 1.0;
     double message_weight = 1.0;
     double time_weight = 1.0;
-    double user_id_weight = 1.0; 
-    double ip_weight = 1.0; 
+    double user_id_weight = 1.0;
+    double ip_weight = 1.0;
 };
 
 #endif // EVENT_ANALYZER_H

@@ -3,46 +3,13 @@
 #include <sstream>
 #include <algorithm>
 
-std::string GenerateRandomWord(std::mt19937& gen) {
-    static const std::string vowels = "aeiouy";
-    static const std::string consonants = "bcdfghjklmnpqrstvwxz";
-    std::uniform_int_distribution<> syllable_count_dist(1, 3);
-    std::uniform_int_distribution<> vowel_dist(0, vowels.length() - 1);
-    std::uniform_int_distribution<> consonant_dist(0, consonants.length() - 1);
-
-    int syllables = syllable_count_dist(gen);
-    std::string word;
-
-    for (int s = 0; s < syllables; ++s) {
-        if (s == 0 || gen() % 100 < 70) {
-            word += consonants[consonant_dist(gen)];
-        }
-        word += vowels[vowel_dist(gen)];
-        if (gen() % 100 < 50) {
-            word += consonants[consonant_dist(gen)];
-        }
-    }
-
-    if (gen() % 100 < 30) {
-        static const std::string suffixes[] = {"ing", "ed", "er", "est", "ly", "tion", "ness", "ment", "ful", "less"};
-        word += suffixes[gen() % (sizeof(suffixes) / sizeof(suffixes[0]))];
-    }
-
-    if (gen() % 100 < 10) {
-        static const std::string prefixes[] = {"un", "re", "pre", "over", "under", "out", "up", "down", "in", "out"};
-        word = prefixes[gen() % (sizeof(prefixes) / sizeof(prefixes[0]))] + word;
-    }
-
-    return word;
-}
-
-EventGenerator::EventGenerator(LazyWriteStream& write_stream)
+EventGenerator::EventGenerator(LazyWriteStream& write_stream, const std::string& dictionary_file)
     : write_stream(write_stream),
       gen(rd()),
       id_dist(1, 1000000),
       tag_count_dist(1, 4),
       attr_dist(0, 100),
-      word_count_dist(5, 15)
+      dictionary(dictionary_file)
 {
     static const std::string event_type_data[] = {
         "INFO", "WARNING", "ERROR", "DEBUG", "USER_ACTION", "PERFORMANCE_ISSUE", "SYSTEM_START", "SYSTEM_STOP"
@@ -103,54 +70,62 @@ void EventGenerator::GenerateLoop() {
         return;
     }
 
+    if (dictionary.GetRandomAction(gen).empty() || dictionary.GenerateRandomMessage(gen).empty()) {
+         std::cerr << "Error: Dictionary is empty or not loaded correctly." << std::endl;
+         return;
+    }
+
     while (!should_stop) {
         std::string id = "EVT_" + std::to_string(id_dist(gen));
         std::string type = event_types.Get(type_dist(gen));
 
-        int num_words = word_count_dist(gen);
-        std::ostringstream msg_stream;
-        for (int i = 0; i < num_words; ++i) {
-            if (i > 0) msg_stream << " ";
-            msg_stream << GenerateRandomWord(gen);
-        }
-        std::string message = msg_stream.str();
+        std::string message = dictionary.GenerateRandomMessage(gen);
 
         int num_tags = tag_count_dist(gen);
         if (num_tags < 1) {
             num_tags = 1;
         }
 
-        MutableArraySequence<std::string> unique_tags_temp;
+        // --- Временное решение: используем ArraySequence с известным размером ---
+        ArraySequence<std::string> unique_tags_temp(num_tags); // Создаем с размером num_tags
         int attempts = 0;
-        int added_count = 0;
+        int filled_count = 0; // Счетчик заполненных элементов
 
-        while (added_count < num_tags && attempts < num_tags * 5) {
+        while (filled_count < num_tags && attempts < num_tags * 5) {
             std::string new_tag = possible_tags.Get(tag_dist(gen));
 
+            if (new_tag.empty()) {
+                attempts++;
+                continue;
+            }
+
+            // Проверяем, есть ли тег уже в unique_tags_temp
             bool is_unique = true;
-            for (size_t j = 0; j < unique_tags_temp.GetLength(); ++j) {
-                if (unique_tags_temp.Get(j) == new_tag) {
+            for (size_t j = 0; j < filled_count; ++j) { // filled_count - текущее количество заполненных элементов
+                if (unique_tags_temp.Get(j) == new_tag) { // Get по индексу j
                     is_unique = false;
                     break;
                 }
             }
 
             if (is_unique) {
-                unique_tags_temp.Append(new_tag);
-                added_count++;
+                unique_tags_temp.SetAt(filled_count, new_tag); // Устанавливаем значение по индексу filled_count
+                filled_count++;
             }
             attempts++;
         }
 
-        ArraySequence<std::string> final_tags(unique_tags_temp.GetLength());
-        for (size_t idx = 0; idx < unique_tags_temp.GetLength(); ++idx) {
+        // Создаем финальный ArraySequence нужного размера
+        ArraySequence<std::string> final_tags(filled_count);
+        for (size_t idx = 0; idx < filled_count; ++idx) {
              final_tags.SetAt(idx, unique_tags_temp.Get(idx));
         }
+        // -------------------------------------
 
         std::string user_id = possible_user_ids.Get(user_id_dist(gen));
         std::string ip_address = possible_ips.Get(ip_dist(gen));
 
-        Event event(id, type, message, final_tags, user_id, ip_address, std::chrono::steady_clock::now()); // Передаем новые поля
+        Event event(id, type, message, final_tags, user_id, ip_address, std::chrono::steady_clock::now());
 
         try {
             write_stream.Write(event);

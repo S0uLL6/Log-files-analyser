@@ -15,10 +15,12 @@ public:
                  const ArraySequence<std::string>& common_tags,
                  const std::set<std::string>& common_words,
                  double time_similarity,
-                 bool user_id_match, 
-                 bool ip_match); 
+                 bool user_id_match,
+                 bool ip_match);
     void ProcessEventForSimilarity(const Event& new_event);
-    void ProcessEventForSimilarity(const Event& new_event, double tag_weight, double message_weight, double time_weight, double user_id_weight, double ip_weight); // Новые параметры
+    void ProcessEventForSimilarity(const Event& new_event,
+                                  double tag_weight, double message_weight, double time_weight, double user_id_weight, double ip_weight,
+                                  bool use_tags, bool use_messages, bool use_time, bool use_user_id, bool use_ip); 
     void PrintGraph() const;
     void PrintEventDetails(const std::string& id) const;
     ArraySequence<std::string> GetVertices() const;
@@ -27,14 +29,17 @@ public:
     void PrintTopConnectedEvents() const;
     void PrintIsolatedEvents() const;
 
+    void AnalyzeByTagsOnly();
+    void AnalyzeByNonTagsOnly();
+
 private:
     struct EdgeDetails {
         double weight;
         ArraySequence<std::string> common_tags;
         std::set<std::string> common_words;
         double time_similarity;
-        bool user_id_match; 
-        bool ip_match; 
+        bool user_id_match;
+        bool ip_match;
     };
 
     struct GraphNode {
@@ -51,19 +56,23 @@ private:
                                std::set<std::string>& intersection) const;
     double CalculateTimeSimilarity(const std::chrono::steady_clock::time_point& t1,
                                   const std::chrono::steady_clock::time_point& t2) const;
-    // --- Новые функции ---
     double CalculateUserIdSimilarity(const std::string& id1, const std::string& id2) const;
     double CalculateIpSimilarity(const std::string& ip1, const std::string& ip2) const;
-    // ---------------------
     void SortArraySequence(ArraySequence<std::string>& arr) const;
     ArraySequence<std::string> ArraySetIntersection(const ArraySequence<std::string>& arr1, const ArraySequence<std::string>& arr2) const;
 
     static constexpr double DEFAULT_TAG_WEIGHT = 1.0;
     static constexpr double DEFAULT_MESSAGE_WEIGHT = 1.0;
     static constexpr double DEFAULT_TIME_WEIGHT = 1.0;
-    static constexpr double DEFAULT_USER_ID_WEIGHT = 1.0; 
-    static constexpr double DEFAULT_IP_WEIGHT = 1.0; 
+    static constexpr double DEFAULT_USER_ID_WEIGHT = 1.0;
+    static constexpr double DEFAULT_IP_WEIGHT = 1.0;
     static constexpr auto TIME_WINDOW_MS = std::chrono::milliseconds(5000);
+
+    double default_tag_weight = DEFAULT_TAG_WEIGHT;
+    double default_message_weight = DEFAULT_MESSAGE_WEIGHT;
+    double default_time_weight = DEFAULT_TIME_WEIGHT;
+    double default_user_id_weight = DEFAULT_USER_ID_WEIGHT;
+    double default_ip_weight = DEFAULT_IP_WEIGHT;
 };
 
 #endif // DEPENDENCY_GRAPH_H

@@ -4,6 +4,7 @@
 #include "Event.hpp"
 #include "LazyWriteStream.hpp"
 #include "Sequence.hpp"
+#include "Dictionary.hpp" 
 #include <random>
 #include <thread>
 #include <chrono>
@@ -11,7 +12,7 @@
 
 class EventGenerator {
 public:
-    EventGenerator(LazyWriteStream& write_stream);
+    EventGenerator(LazyWriteStream& write_stream, const std::string& dictionary_file); 
     void Start();
     void Stop();
     void Join();
@@ -33,12 +34,13 @@ private:
     std::uniform_int_distribution<> user_id_dist;
     std::uniform_int_distribution<> ip_dist;
     std::uniform_int_distribution<> attr_dist;
-    std::uniform_int_distribution<> word_count_dist;
 
     ArraySequence<std::string> event_types;
     ArraySequence<std::string> possible_tags;
-    ArraySequence<std::string> possible_user_ids; 
-    ArraySequence<std::string> possible_ips; 
+    ArraySequence<std::string> possible_user_ids;
+    ArraySequence<std::string> possible_ips;
+
+    Dictionary dictionary;
 };
 
 #endif // EVENT_GENERATOR_H
