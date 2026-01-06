@@ -1,0 +1,80 @@
+[
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/lab5_app_autogen/mocs_compilation.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/mocs_compilation.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/mocs_compilation.cpp",
+  "output": "CMakeFiles/lab5_app.dir/lab5_app_autogen/mocs_compilation.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/main.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/main.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/main.cpp",
+  "output": "CMakeFiles/lab5_app.dir/main.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/MainWindow.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/MainWindow.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/MainWindow.cpp",
+  "output": "CMakeFiles/lab5_app.dir/MainWindow.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/GeneratorWorker.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/GeneratorWorker.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/GeneratorWorker.cpp",
+  "output": "CMakeFiles/lab5_app.dir/GeneratorWorker.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/AnalyzerWorker.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/AnalyzerWorker.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/AnalyzerWorker.cpp",
+  "output": "CMakeFiles/lab5_app.dir/AnalyzerWorker.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/UserInterface.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/UserInterface.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/UserInterface.cpp",
+  "output": "CMakeFiles/lab5_app.dir/UserInterface.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/Event.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/Event.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/Event.cpp",
+  "output": "CMakeFiles/lab5_app.dir/Event.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/EventAnalyzer.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/EventAnalyzer.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/EventAnalyzer.cpp",
+  "output": "CMakeFiles/lab5_app.dir/EventAnalyzer.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/Dictionary.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/Dictionary.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/Dictionary.cpp",
+  "output": "CMakeFiles/lab5_app.dir/Dictionary.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/EventGenerator.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/EventGenerator.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/EventGenerator.cpp",
+  "output": "CMakeFiles/lab5_app.dir/EventGenerator.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/LazyReadStream.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/LazyReadStream.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/LazyReadStream.cpp",
+  "output": "CMakeFiles/lab5_app.dir/LazyReadStream.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/LazyWriteStream.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/LazyWriteStream.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/LazyWriteStream.cpp",
+  "output": "CMakeFiles/lab5_app.dir/LazyWriteStream.cpp.o"
+},
+{
+  "directory": "/Users/mak/Documents/GitHub/Log-files-analyser/build",
+  "command": "/usr/bin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/Users/mak/Documents/GitHub/Log-files-analyser/build/lab5_app_autogen/include -I/Users/mak/Documents/GitHub/Log-files-analyser -isystem /opt/homebrew/opt/qt/lib/QtWidgets.framework/Headers -iframework /opt/homebrew/opt/qt/lib -isystem /opt/homebrew/opt/qt/lib/QtCore.framework/Headers -isystem /opt/homebrew/opt/qt/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/opt/qt/include -isystem /opt/homebrew/opt/qt/lib/QtGui.framework/Headers -std=gnu++17 -arch arm64 -o CMakeFiles/lab5_app.dir/DependencyGraph.cpp.o -c /Users/mak/Documents/GitHub/Log-files-analyser/DependencyGraph.cpp",
+  "file": "/Users/mak/Documents/GitHub/Log-files-analyser/DependencyGraph.cpp",
+  "output": "CMakeFiles/lab5_app.dir/DependencyGraph.cpp.o"
+}
+]

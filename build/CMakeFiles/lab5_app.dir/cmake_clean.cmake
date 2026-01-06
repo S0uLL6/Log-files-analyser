@@ -1,0 +1,40 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/lab5_app_autogen.dir/AutogenUsed.txt"
+  "CMakeFiles/lab5_app_autogen.dir/ParseCache.txt"
+  "lab5_app_autogen"
+  "CMakeFiles/lab5_app.dir/AnalyzerWorker.cpp.o"
+  "CMakeFiles/lab5_app.dir/AnalyzerWorker.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/DependencyGraph.cpp.o"
+  "CMakeFiles/lab5_app.dir/DependencyGraph.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/Dictionary.cpp.o"
+  "CMakeFiles/lab5_app.dir/Dictionary.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/Event.cpp.o"
+  "CMakeFiles/lab5_app.dir/Event.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/EventAnalyzer.cpp.o"
+  "CMakeFiles/lab5_app.dir/EventAnalyzer.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/EventGenerator.cpp.o"
+  "CMakeFiles/lab5_app.dir/EventGenerator.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/GeneratorWorker.cpp.o"
+  "CMakeFiles/lab5_app.dir/GeneratorWorker.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/LazyReadStream.cpp.o"
+  "CMakeFiles/lab5_app.dir/LazyReadStream.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/LazyWriteStream.cpp.o"
+  "CMakeFiles/lab5_app.dir/LazyWriteStream.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/MainWindow.cpp.o"
+  "CMakeFiles/lab5_app.dir/MainWindow.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/UserInterface.cpp.o"
+  "CMakeFiles/lab5_app.dir/UserInterface.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/lab5_app_autogen/mocs_compilation.cpp.o"
+  "CMakeFiles/lab5_app.dir/lab5_app_autogen/mocs_compilation.cpp.o.d"
+  "CMakeFiles/lab5_app.dir/main.cpp.o"
+  "CMakeFiles/lab5_app.dir/main.cpp.o.d"
+  "lab5_app"
+  "lab5_app.pdb"
+  "lab5_app_autogen/mocs_compilation.cpp"
+  "lab5_app_autogen/timestamp"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/lab5_app.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()
